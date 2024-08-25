@@ -1,0 +1,43 @@
+.note-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  .note-title {
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  .note-body {
+    flex-grow: 1;
+    font-size: 16px;
+    padding: 10px;
+    margin-bottom: 15px;
+    height: 700px;
+  }
+
+  textarea {
+    border: none;
+    resize: none;
+    outline: none;
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    box-sizing: border-box;
+  }
+
+  .delete-button {
+    background-color: #ff4d4d;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    align-self: flex-end;
+
+    &:hover {
+      background-color: #ff3333;
+    }
+  }
+}

@@ -1,12 +1,12 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
-import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import NotePage from "../components/NotePage";
 import NewTab from "../components/NewTab";
 import { fetchNotes } from "../services/api";
 import Logout from "../components/Logout";
+import "../styles/MainPage.scss";
 
 const MainPage = () => {
   const [notes, setNotes] = useState([]);
@@ -26,7 +26,7 @@ const MainPage = () => {
   };
 
   const addNoteToList = (newNote) => {
-    setNotes((prevNotes) => [newNote, ...prevNotes]);
+    setNotes((prevNotes) => [...prevNotes, newNote]);
   };
 
   const removeNoteFromList = (noteId) => {
@@ -37,28 +37,30 @@ const MainPage = () => {
   };
 
   return (
-    <div className="App">
+    <div className="app">
       <Routes>
         <Route
           path="*"
           element={
-            <div>
+            <div className="app-container">
               <Sidebar notes={notes} addNoteToList={addNoteToList} />
-              <Routes>
-                <Route path="/" element={<NewTab />} />
-                <Route
-                  path="/note/:id"
-                  element={
-                    <NotePage
-                      notes={notes}
-                      setNotes={setNotes}
-                      updateNoteInList={updateNoteInList}
-                      removeNoteFromList={removeNoteFromList}
-                    />
-                  }
-                />
-              </Routes>
-              <Logout />
+              <div className="main-content">
+                <Routes>
+                  <Route path="/" element={<NewTab />} />
+                  <Route
+                    path="/note/:id"
+                    element={
+                      <NotePage
+                        notes={notes}
+                        setNotes={setNotes}
+                        updateNoteInList={updateNoteInList}
+                        removeNoteFromList={removeNoteFromList}
+                      />
+                    }
+                  />
+                </Routes>
+              </div>
+              {/* <Logout /> */}
             </div>
           }
         />
