@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { fetchNote, updateNote, deleteNote, fetchNotes } from "../services/api";
+import { useParams, useLocation } from "react-router-dom";
+import { fetchNote, updateNote, fetchNotes } from "../services/api";
 import "../styles/NotePage.scss";
 import { MDXEditor } from "@mdxeditor/editor";
 import "@mdxeditor/editor/style.css";
@@ -11,9 +11,8 @@ import {
   quotePlugin,
 } from "@mdxeditor/editor";
 
-const NotePage = ({ updateNoteInList, removeNoteFromList, setNotes }) => {
+const NotePage = ({ updateNoteInList, notes }) => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const location = useLocation();
   const [note, setNote] = useState({ title: "", body: "" });
   const [isNewNote, setIsNewNote] = useState(false);
@@ -25,17 +24,21 @@ const NotePage = ({ updateNoteInList, removeNoteFromList, setNotes }) => {
     const queryParams = new URLSearchParams(location.search);
     setIsNewNote(queryParams.get("new") === "true");
 
-    const getNote = async () => {
+    const fetchAndSetNote = async () => {
       if (id) {
-        const data = await fetchNote(id);
-        setNote(data);
+        const existingNote = notes?.find((note) => note.id === parseInt(id));
+        if (existingNote) {
+          setNote(existingNote);
+        } else {
+          const data = await fetchNote(id);
+          setNote(data);
+        }
       }
       setNoteLoaded(true);
     };
 
-    getNote();
-  }, [id, location.search]);
-
+    fetchAndSetNote();
+  }, [id, location.search, notes]);
   useEffect(() => {
     const saveNote = async () => {
       if (id && note) {
@@ -67,20 +70,6 @@ const NotePage = ({ updateNoteInList, removeNoteFromList, setNotes }) => {
     setNote((prevNote) => ({ ...prevNote, body: value }));
   };
 
-  const handleDelete = async () => {
-    if (id) {
-      await deleteNote(id);
-      removeNoteFromList(id);
-      await fetchNotesAgain();
-      navigate("/", { replace: true });
-    }
-  };
-
-  const fetchNotesAgain = async () => {
-    let data = await fetchNotes();
-    setNotes(data);
-  };
-
   return (
     <div className="note-container">
       <input
@@ -102,9 +91,6 @@ const NotePage = ({ updateNoteInList, removeNoteFromList, setNotes }) => {
           markdownShortcutPlugin(),
         ]}
       />
-      <button className="delete-button" onClick={handleDelete}>
-        Delete
-      </button>
     </div>
   );
 };

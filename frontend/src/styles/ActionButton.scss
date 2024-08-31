@@ -1,0 +1,19 @@
+.add-note-button,
+.add-folder-button {
+  padding: 6px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .icon {
+    font-size: 1.4rem;
+    color: #333;
+  }
+}

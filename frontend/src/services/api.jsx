@@ -42,3 +42,48 @@ export const deleteNote = async (id) => {
     console.error("Error deleting note:", error);
   }
 };
+
+export const fetchFolders = async () => {
+  const response = await fetch("http://127.0.0.1:8000/api/folders/");
+  return await response.json();
+};
+
+export const fetchFolder = async (id) => {
+  const response = await fetch(`http://127.0.0.1:8000/api/folders/${id}/`);
+  return await response.json();
+};
+
+export const createFolder = async (folder) => {
+  const response = await fetch("http://127.0.0.1:8000/api/folders/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(folder),
+  });
+  return response.json();
+};
+
+export const updateFolder = async (id, folder) => {
+  await fetch(`http://127.0.0.1:8000/api/folders/${id}/`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(folder),
+  });
+};
+
+export const deleteFolder = async (id) => {
+  try {
+    const response = await fetch(`http://127.0.0.1:8000/api/folders/${id}/`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to delete the folder");
+    }
+  } catch (error) {
+    console.error("Error deleting folder:", error);
+  }
+};

@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .models import Note
-from .serializers import NoteSerializer
+from .models import Note, Folder
+from .serializers import NoteSerializer, FolderSerializer
 
 @api_view(['GET'])
 def getRoutes(request):
@@ -53,8 +53,10 @@ def getNotes(request):
     # Create note
     if request.method == 'POST':
         data = request.data
+        folder = Folder.objects.get(id=data.get('folder')) if data.get('folder') else None
         note = Note.objects.create(
-            body=data['body']
+            body=data['body'],
+            folder=folder
         )
         serializer = NoteSerializer(note, many=False)
         return Response(serializer.data)
@@ -83,3 +85,37 @@ def getNote(request, pk):
         note.delete()
         return Response('Note was deleted')
         
+
+
+@api_view(['GET', 'POST'])
+def getFolders (request):
+    if request.method == 'GET':
+        folders = Folder.objects.all()
+        serializer = FolderSerializer(folders, many=True)
+        return Response(serializer.data)
+    
+    if request.method == 'POST':
+        data = request.data
+        folders = Folder.objects.create(name=data['name'])
+        serializer = FolderSerializer(folders, many=False)
+        return Response(serializer.data)
+    
+@api_view(['GET', 'PUT', 'DELETE'])
+def getFolder (request, pk):
+    if request.method == 'GET':
+        folder = Folder.objects.get(id=pk)
+        serializer = FolderSerializer(folder, many=False)
+        return Response(serializer.data)
+    
+    if request.method == 'PUT':
+        data = request.data
+        folder = Folder.objects.get(id=pk)
+        serializer = FolderSerializer(instance=folder, data=data)
+        if serializer.is_valid():
+            serializer.save()
+        return Response(serializer.data)
+    
+    if request.method == 'DELETE':
+        folder = Folder.objects.get(id=pk)
+        folder.delete()
+        return Response('Folder was deleted')
