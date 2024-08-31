@@ -7,6 +7,7 @@
   flex-direction: column;
   overflow-y: auto;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  position: relative;
 
   .action-buttons {
     display: flex;
@@ -42,11 +43,6 @@
         color: #333;
         width: 16px;
       }
-
-      &.selected {
-        background-color: #b4b4b4;
-        border-radius: 8px;
-      }
     }
 
     .folder-title {
@@ -61,6 +57,15 @@
       padding-left: 17px;
       border-left: 1px solid #ccc;
     }
+  }
+
+  .note.opened {
+    background-color: #b8b8b8;
+  }
+
+  .selected {
+    border: 1px solid #b8b8b8;
+    border-radius: 8px;
   }
 
   .note-title {
@@ -88,7 +93,7 @@
     background-color: #fff;
     border: 1px solid #ccc;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    z-index: 100;
+    z-index: 1000;
 
     button {
       display: block;
@@ -101,6 +106,47 @@
 
       &:hover {
         background-color: #f0f0f0;
+      }
+    }
+  }
+
+  .configuration-button {
+    position: absolute;
+    bottom: 25px;
+    right: 10px;
+    border: none;
+    border-radius: 50%;
+    padding: 10px;
+    cursor: pointer;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  .config-menu {
+    position: absolute;
+    bottom: 60px;
+    right: 10px;
+    background: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    padding: 10px;
+    z-index: 1000;
+
+    button {
+      display: block;
+      width: 100%;
+      border: none;
+      background: none;
+      padding: 8px;
+      text-align: left;
+      cursor: pointer;
+
+      &:hover {
+        background: #f0f0f0;
       }
     }
   }

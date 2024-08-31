@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import AddNoteButton from "./AddNoteButton";
 import AddFolderButton from "./AddFolderButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronDown,
   faChevronRight,
+  faGear,
 } from "@fortawesome/free-solid-svg-icons";
+
 import "../styles/Sidebar.scss";
 import {
   deleteFolder,
@@ -14,7 +16,9 @@ import {
   updateNote,
   fetchNotes,
   fetchFolders,
+  createNote,
 } from "../services/api";
+import Logout from "./Logout";
 
 const Sidebar = ({
   folders,
@@ -25,9 +29,9 @@ const Sidebar = ({
   setNotes,
   handleDeleteNote,
 }) => {
-  const [selectedFolder, setSelectedFolder] = useState(null);
   const [expandedFolders, setExpandedFolders] = useState({});
   const [isEditing, setIsEditing] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null);
   const [contextMenu, setContextMenu] = useState({
     visible: false,
     x: 0,
@@ -36,8 +40,13 @@ const Sidebar = ({
     type: null,
   });
 
+  const [configMenuVisible, setConfigMenuVisible] = useState(false);
+
+  const location = useLocation();
+  const currentNoteId = location.pathname.split("/").pop();
+  const navigate = useNavigate();
+
   const handleFolderClick = (folder) => {
-    setSelectedFolder(folder.id);
     toggleFolder(folder.id);
   };
 
@@ -48,12 +57,20 @@ const Sidebar = ({
     }));
   };
 
+  const handleAddNoteToFolder = async (folderId) => {
+    const newNote = { title: "", body: "", folder: folderId };
+    const createdNote = await createNote(newNote);
+    addNoteToList(createdNote);
+    navigate(`/note/${createdNote.id}?new=true`);
+    closeContextMenu();
+  };
+
   const handleSidebarClick = (e) => {
     if (e.target.closest(".folder, .note")) {
       return;
     }
-    setSelectedFolder(null);
     closeContextMenu();
+    setSelectedItem(null);
   };
 
   const handleEditFolder = async (folderId, newName) => {
@@ -71,14 +88,15 @@ const Sidebar = ({
   const handleDeleteFolder = async (folderId) => {
     await deleteFolder(folderId);
     fetchNotesAndFoldersAgain();
-    setSelectedFolder(null);
     setContextMenu({ visible: false, x: 0, y: 0, itemId: null, type: null });
+    setSelectedItem(null);
   };
 
   const handleRemoveNote = async (noteId) => {
     await handleDeleteNote(noteId);
     fetchNotesAndFoldersAgain();
     setContextMenu({ visible: false, x: 0, y: 0, itemId: null, type: null });
+    setSelectedItem(null);
   };
 
   const handleContextMenu = (event, itemId, type) => {
@@ -90,10 +108,12 @@ const Sidebar = ({
       itemId,
       type,
     });
+    setSelectedItem(itemId);
   };
 
   const closeContextMenu = () => {
     setContextMenu({ visible: false, x: 0, y: 0, itemId: null, type: null });
+    setSelectedItem(null);
   };
 
   const handleRenameClick = () => {
@@ -106,6 +126,12 @@ const Sidebar = ({
       handleDeleteFolder(contextMenu.itemId);
     } else if (contextMenu.type === "note") {
       handleRemoveNote(contextMenu.itemId);
+    }
+  };
+
+  const handleAddNoteClick = () => {
+    if (contextMenu.type === "folder") {
+      handleAddNoteToFolder(contextMenu.itemId);
     }
   };
 
@@ -130,7 +156,9 @@ const Sidebar = ({
     return notes.map((note) => (
       <div
         key={note.id}
-        className="note"
+        className={`note ${
+          note.id.toString() === currentNoteId ? "opened" : ""
+        } ${selectedItem === note.id ? "selected" : ""}`}
         onContextMenu={(e) => handleContextMenu(e, note.id, "note")}
       >
         {isEditing === note.id ? (
@@ -152,7 +180,10 @@ const Sidebar = ({
 
   const renderFolders = (folders) => {
     return folders.map((folder) => (
-      <div key={folder.id} className="folder">
+      <div
+        key={folder.id}
+        className={`folder ${selectedItem === folder.id ? "selected" : ""}`}
+      >
         {isEditing === folder.id ? (
           <input
             type="text"
@@ -163,9 +194,7 @@ const Sidebar = ({
           />
         ) : (
           <div
-            className={`folder-header ${
-              selectedFolder === folder.id ? "selected" : ""
-            }`}
+            className="folder-header"
             onClick={() => handleFolderClick(folder)}
             onContextMenu={(e) => handleContextMenu(e, folder.id, "folder")}
           >
@@ -189,12 +218,10 @@ const Sidebar = ({
     <aside className="sidebar" onClick={handleSidebarClick}>
       {/* Action buttons */}
       <div className="action-buttons">
-        <AddNoteButton
-          addNoteToList={addNoteToList}
-          selectedFolder={selectedFolder}
-        />
+        <AddNoteButton addNoteToList={addNoteToList} />
         <AddFolderButton addFolderToList={addFolderToList} />
       </div>
+
       {/* Folder Notes */}
       <div className="folders-container">{renderFolders(folders)}</div>
       <div className="root-notes-container">{renderNotes(rootNotes)}</div>
@@ -205,8 +232,22 @@ const Sidebar = ({
           className="context-menu"
           style={{ top: contextMenu.y, left: contextMenu.x }}
         >
+          <button onClick={handleAddNoteClick}>Add Note</button>
           <button onClick={handleRenameClick}>Rename</button>
           <button onClick={handleDeleteClick}>Delete</button>
+        </div>
+      )}
+
+      {/* Configuration */}
+      <button
+        className="configuration-button"
+        onClick={() => setConfigMenuVisible(!configMenuVisible)}
+      >
+        <FontAwesomeIcon icon={faGear} />
+      </button>
+      {configMenuVisible && (
+        <div className="config-menu" style={{ bottom: 45, right: 25 }}>
+          <Logout />
         </div>
       )}
     </aside>

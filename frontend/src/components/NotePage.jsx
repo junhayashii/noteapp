@@ -52,15 +52,18 @@ const NotePage = ({ updateNoteInList, notes }) => {
   }, [note, id]);
 
   useEffect(() => {
-    if (noteLoaded) {
-      if (isNewNote && titleRef.current) {
-        titleRef.current.select();
-      } else if (!isNewNote && editorRef.current) {
-        editorRef.current.focus();
-      }
-      setNoteLoaded(false);
+    if (id) {
+      const timer = setTimeout(() => {
+        if (isNewNote && titleRef.current) {
+          titleRef.current.focus();
+          titleRef.current.select();
+        } else if (editorRef.current) {
+          editorRef.current.focus();
+        }
+      }, 100);
+      return () => clearTimeout(timer);
     }
-  }, [isNewNote, noteLoaded]);
+  }, [id, isNewNote]);
 
   const handleChange = (e) => {
     setNote({ ...note, [e.target.name]: e.target.value });
