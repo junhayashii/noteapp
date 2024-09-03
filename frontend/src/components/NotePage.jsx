@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useLocation } from "react-router-dom";
-import { fetchNote, updateNote, fetchNotes } from "../services/api";
+import { fetchNote, updateNote } from "../services/api";
 import "../styles/NotePage.scss";
 import { MDXEditor } from "@mdxeditor/editor";
 import "@mdxeditor/editor/style.css";
@@ -82,18 +82,20 @@ const NotePage = ({ updateNoteInList, notes }) => {
         value={note.title}
         ref={titleRef}
       />
-      <MDXEditor
-        key={note.title}
-        markdown={note.body}
-        onChange={handleEditorChange}
-        ref={editorRef}
-        plugins={[
-          headingsPlugin(),
-          listsPlugin(),
-          quotePlugin(),
-          markdownShortcutPlugin(),
-        ]}
-      />
+      <div className="editor-container">
+        <MDXEditor
+          key={note.title}
+          markdown={note.body}
+          onChange={handleEditorChange}
+          ref={editorRef}
+          plugins={[
+            headingsPlugin(),
+            listsPlugin(),
+            quotePlugin(),
+            markdownShortcutPlugin(),
+          ]}
+        />
+      </div>
     </div>
   );
 };

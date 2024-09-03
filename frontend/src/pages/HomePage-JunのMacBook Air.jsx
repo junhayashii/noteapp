@@ -4,7 +4,10 @@ import { Link } from "react-scroll";
 import FAQSection from "../components/FAQSection";
 import Pricing from "../components/Pricing";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRightToBracket } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowRightArrowLeft,
+  faRightLong,
+} from "@fortawesome/free-solid-svg-icons";
 import "../styles/HomePage.scss";
 
 const HomePage = () => {
@@ -31,12 +34,8 @@ const HomePage = () => {
                 </Link>
               </li>
               <button>
-                <RouterLink to="/login">
-                  Sign In{" "}
-                  <FontAwesomeIcon
-                    icon={faArrowRightToBracket}
-                  ></FontAwesomeIcon>
-                </RouterLink>
+                <RouterLink to="/login">Sign In</RouterLink>
+                <FontAwesomeIcon icon={faArrowRightArrowLeft}></FontAwesomeIcon>
               </button>
             </ul>
           </nav>

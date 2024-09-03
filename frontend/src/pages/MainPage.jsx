@@ -10,7 +10,6 @@ import Sidebar from "../components/Sidebar";
 import NotePage from "../components/NotePage";
 import NewTab from "../components/NewTab";
 import { fetchNotes, fetchFolders, deleteNote } from "../services/api";
-import Logout from "../components/Logout";
 import "../styles/MainPage.scss";
 
 const MainPage = () => {
@@ -128,7 +127,6 @@ const MainPage = () => {
                   />
                 </Routes>
               </div>
-              {/* <Logout /> */}
             </div>
           }
         />

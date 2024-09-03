@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import "../styles/AuthForms.scss";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -31,21 +32,35 @@ const Login = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button type="submit">Login</button>
-    </form>
+    <div className="auth-form-container">
+      <form className="auth-form" onSubmit={handleSubmit}>
+        <h2>Login</h2>
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="auth-input"
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="auth-input"
+        />
+        <p className="reset">
+          <Link to="">Forgot your passowrd?</Link>
+        </p>
+
+        <button type="submit" className="auth-button">
+          Login
+        </button>
+        <p className="auth-switch">
+          Don't have an Account? <Link to="/register">Sign up</Link>
+        </p>
+      </form>
+    </div>
   );
 };
 
