@@ -3,3 +3,4 @@ node_modules/
 venv/
 .env
 .sqlite3
+.dbsqlite3
